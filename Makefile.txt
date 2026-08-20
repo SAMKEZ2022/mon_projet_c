@@ -1,0 +1,19 @@
+CC = gcc
+CFLAGS = -Wall -Wextra -pedantic -std=gnu89
+SRC = $(wildcard *.c)
+OBJ = $(SRC:.c=.o)
+TARGET = a.exe
+
+all: $(TARGET)
+
+$(TARGET): $(OBJ)
+	$(CC) $(CFLAGS) -o $(TARGET) $(OBJ)
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+clean:
+	del /Q $(OBJ) $(TARGET) 2>nul
+
+run: all
+	.\$(TARGET)
