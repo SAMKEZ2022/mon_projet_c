@@ -1,0 +1,30 @@
+name: Basic CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build deps
+        run: sudo apt-get update && sudo apt-get install -y build-essential shellcheck
+      - name: Compile C files
+        run: |
+          set -e
+          if ls *.c >/dev/null 2>&1; then
+            gcc -Wall -Wextra -pedantic -std=gnu89 *.c -o check_bin
+            echo "C compile: OK"
+          else
+            echo "No C files to compile"
+          fi
+      - name: Run shellcheck
+        run: |
+          SCRIPTS=$(git ls-files '*.sh' '*/**/*.sh' || true)
+          if [ -n "$SCRIPTS" ]; then
+            shellcheck $SCRIPTS || true
+          else
+            echo "No shell scripts to lint"
+          fi
